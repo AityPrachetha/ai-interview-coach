@@ -90,3 +90,35 @@ class InterviewSessionOut(BaseModel):
     skill_match_details: Optional[dict] = None
     questions: List[QuestionOut] = []
     created_at: datetime
+
+
+# ---------- Phase 2: answer loop ----------
+
+class NextQuestionOut(BaseModel):
+    completed: bool
+    question: Optional[QuestionOut] = None
+    session_status: InterviewStatus
+
+
+class AnswerSubmit(BaseModel):
+    question_id: str
+    transcript: str
+
+
+class AnswerOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    question_id: str
+    transcript: Optional[str] = None
+    relevance_score: Optional[float] = None
+    star_score: Optional[dict] = None
+    created_at: datetime
+
+    # Not persisted as separate columns — surfaced here for the client,
+    # sourced from the same LLM call that produced the scores above.
+    strengths: List[str] = []
+    weaknesses: List[str] = []
+
+    session_status: InterviewStatus
+    followup_generated: bool
+    next_question: Optional[QuestionOut] = None
