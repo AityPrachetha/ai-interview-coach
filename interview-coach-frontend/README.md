@@ -1,67 +1,265 @@
-# AI Interview Coach — Frontend
+# 🤖 AI Interview Coach
 
-React + Vite + TypeScript frontend for the FastAPI backend. Handles auth,
-resume/JD upload, a live webcam+voice mock interview, and the final report.
+> A next-generation AI-powered mock interview platform that simulates real technical, HR, and behavioral interviews using Large Language Models, Computer Vision, and Speech Analysis.
 
-## Setup
+---
 
-```bash
-npm install
-npm run dev
+# 🚀 Overview
+
+AI Interview Coach conducts an end-to-end interview experience similar to a real interviewer.
+
+The system analyzes the candidate's resume, compares it with a job description, generates personalized interview questions, conducts a live interview using voice and webcam, evaluates the candidate's responses, and finally generates a comprehensive hiring-readiness report.
+
+---
+
+# ✨ Features
+
+### Authentication
+
+- User Registration
+- Secure Login (JWT Authentication)
+
+### Resume Analysis
+
+- Upload Resume (PDF/DOCX)
+- Automatic Resume Parsing
+- Skill Extraction
+- Resume-JD Matching
+
+### Interview Generation
+
+Choose interview type:
+
+- HR Interview
+- Technical Interview
+- Behavioral Interview
+
+The AI automatically generates personalized interview questions based on:
+
+- Resume
+- Job Description
+- Selected Interview Type
+
+---
+
+# 🎙️ Live AI Interview
+
+During the interview, the system evaluates multiple aspects of the candidate.
+
+## Voice Analysis
+
+- Speech-to-Text
+- Speaking Pace
+- Voice Confidence
+- Filler Word Detection
+
+## Computer Vision
+
+Using MediaPipe + OpenCV:
+
+- Eye Contact
+- Facial Expressions
+- Head Pose
+- Posture Analysis
+
+## AI Evaluation
+
+The LLM evaluates:
+
+- Technical Accuracy
+- Answer Relevance
+- STAR Method (Behavioral)
+- Communication Quality
+
+---
+
+# 📊 Final Interview Report
+
+After completing the interview, the candidate receives:
+
+- Resume Match Score
+- Technical Knowledge Score
+- Communication Score
+- Confidence Score
+- Behavioral Score
+- Hiring Readiness Score
+- Personalized Improvement Suggestions
+
+---
+
+# 🏗️ System Architecture
+
+```
+                     Resume
+                        │
+                        ▼
+                 Resume Parser
+                        │
+                        ▼
+               Skill Extraction
+                        │
+                        ▼
+                 Job Description
+                        │
+                        ▼
+                 Match Calculation
+                        │
+                        ▼
+           AI Question Generation
+                        │
+                        ▼
+          Live Interview Session
+      ┌──────────────┬──────────────┐
+      ▼              ▼              ▼
+ Voice Analysis  Computer Vision  LLM Evaluation
+      └──────────────┬──────────────┘
+                     ▼
+             Final AI Report
 ```
 
-Runs on `http://localhost:5173` by default. Your FastAPI backend must be
-running on `http://localhost:8000` (already allowed by the backend's CORS
-config) — change `VITE_API_BASE_URL` in `.env` if it's somewhere else.
+---
 
-## Pages
+# 🛠️ Tech Stack
 
-- `/login` — sign in or create an account
-- `/setup` — upload resume, paste job description, pick interview type, start
-- `/interview/:sessionId` — the live interview
-- `/report/:sessionId` — final hiring-readiness report
+## Frontend
 
-## How the live interview loop works
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
 
-The backend has no concept of a "live session" — it only exposes stateless
-endpoints (submit an answer, submit a frame, get the next question). All of
-the live-interview behavior — question read aloud, webcam running, timed
-recording, auto-advance — is orchestrated entirely in
-`src/pages/InterviewPage.tsx`:
+## Backend
 
-1. On load: request camera+mic once (`useInterviewMedia`), fetch the first
-   question via `GET /next-question`.
-2. **Asking**: the question text is spoken aloud via the browser's built-in
-   `SpeechSynthesis` API (free, no backend involved) and shown on screen.
-   When speech finishes, move to recording.
-3. **Recording**: starts an audio recording (`MediaRecorder`, audio track
-   only) AND a timer (`Timer` component, 120s default) with an early
-   "I'm done" stop button. While recording, a frame is captured from the
-   live video every 1.5s and POSTed to
-   `/interviews/{id}/questions/{qid}/frames` — this is what populates eye
-   contact / expression / posture scores. Frame POST failures are swallowed
-   silently so a flaky connection doesn't interrupt the interview.
-4. On stop (timeout or button): audio recording is finalized and POSTed to
-   `/interviews/{id}/answers/audio`. The response tells us the next question
-   (if any) or that the session is complete.
-5. **Feedback**: briefly shows the relevance score and whether a follow-up
-   was generated, then auto-advances back to step 2 for the next question
-   (or navigates to `/report/:id` if the session just completed).
+- FastAPI
+- SQLAlchemy
+- PostgreSQL
+- JWT Authentication
 
-There's also a "type your answer instead" fallback during recording, for
-when mic/webcam access isn't available or preferred — it posts to the plain
-text `/answers` endpoint instead.
+## AI
 
-## Known limitations to be aware of
+- Google Gemini / GPT
+- Prompt Engineering
 
-- **Camera/mic permissions**: browsers require a secure context (`https://`
-  or `localhost`) for `getUserMedia` — fine for local dev, will need HTTPS
-  once deployed.
-- **`SpeechSynthesis` voice/quality varies by browser and OS** — it's free
-  and requires no backend work, but don't expect studio-quality narration.
-- **This was built and type-checked in a sandbox with no camera/microphone
-  hardware and no browser to click through.** The build compiles cleanly and
-  the logic has been reviewed carefully, but the actual in-browser
-  experience — permission prompts, autoplay behavior, real recording
-  quality — needs to be verified by you on a real machine before you trust
-  it end to end.
+## Computer Vision
+
+- MediaPipe
+- OpenCV
+
+## Speech Processing
+
+- Whisper
+- Speech Recognition
+
+## Database
+
+- PostgreSQL
+
+## Deployment
+
+- Docker
+- AWS (planned)
+- Vercel (Frontend)
+- Render (Backend)
+
+---
+
+# 📁 Project Structure
+
+```
+AI-Interview-Coach
+│
+├── backend
+│   ├── app
+│   ├── requirements.txt
+│   └── README.md
+│
+├── interview-coach-frontend
+│   ├── src
+│   ├── public
+│   ├── package.json
+│   └── README.md
+│
+└── README.md
+```
+
+---
+
+# 🔄 Project Workflow
+
+```
+User Login
+      │
+      ▼
+Upload Resume
+      │
+      ▼
+Paste Job Description
+      │
+      ▼
+Choose Interview Type
+      │
+      ▼
+Resume Parsing
+      │
+      ▼
+Skill Extraction
+      │
+      ▼
+Question Generation
+      │
+      ▼
+Live Interview
+      │
+      ▼
+Voice + Vision Analysis
+      │
+      ▼
+LLM Evaluation
+      │
+      ▼
+Final Hiring Report
+```
+
+---
+
+# 🧩 Current Features
+
+- Resume Upload
+- Job Description Upload
+- Resume Matching
+- AI Question Generation
+- Live Voice Interview
+- Webcam Frame Analysis
+- Speech-to-Text
+- Adaptive Question Flow
+- AI Evaluation Report
+- Hiring Readiness Score
+
+---
+
+# 🚧 Planned Enhancements
+
+- Company-Specific Interview Modes
+- Coding Interview Environment
+- STAR Evaluation Improvements
+- Dashboard with Progress Tracking
+- Interview History
+- Analytics Across Sessions
+- Docker Deployment
+- AWS Cloud Deployment
+
+---
+
+# 👨‍💻 Author
+
+**Aity Prachetha**
+
+B.Tech – Computer Science & Artificial Intelligence
+
+Amrita Vishwa Vidyapeetham
+
+---
+
+# ⭐ Future Scope
+
+This project aims to become a complete AI-powered interview preparation platform capable of conducting realistic mock interviews while providing actionable insights to help candidates improve their performance over time.
