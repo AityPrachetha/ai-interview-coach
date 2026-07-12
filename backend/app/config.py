@@ -18,6 +18,17 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.5-flash"  # generous free tier as of mid-2026; check aistudio.google.com for current free-tier models
 
+    # Fallback LLM providers — tried in order (Gemini -> Groq -> OpenRouter)
+    # whenever the previous one raises (quota exhausted, rate limited, down,
+    # etc). Leave an API key blank to skip that provider entirely rather
+    # than attempting and failing. Get keys at https://console.groq.com/keys
+    # and https://openrouter.ai/keys
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.3-70b-versatile"
+
+    openrouter_api_key: str = ""
+    openrouter_model: str = "meta-llama/llama-3.3-70b-instruct"
+
     # File upload
     max_upload_mb: int = 10
     upload_dir: str = "./uploads"

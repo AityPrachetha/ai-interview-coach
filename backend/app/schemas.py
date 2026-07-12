@@ -122,3 +122,55 @@ class AnswerOut(BaseModel):
     session_status: InterviewStatus
     followup_generated: bool
     next_question: Optional[QuestionOut] = None
+
+    # Populated only when the answer came from the audio endpoint (Phase 3)
+    speaking_pace_wpm: Optional[float] = None
+    filler_word_count: Optional[int] = None
+    voice_confidence_score: Optional[float] = None
+
+    # Populated when webcam frames were captured during this question (Phase 4)
+    eye_contact_score: Optional[float] = None
+    facial_expression_score: Optional[float] = None
+    posture_score: Optional[float] = None
+
+
+class FrameAnalysisOut(BaseModel):
+    face_detected: bool
+    eye_contact_score: Optional[float] = None
+    facial_expression_score: Optional[float] = None
+    posture_score: Optional[float] = None
+
+
+# ---------- Phase 5: report ----------
+
+class QuestionAnswerSummary(BaseModel):
+    question_id: str
+    question_text: str
+    topic: Optional[str] = None
+    is_followup: bool
+    transcript: Optional[str] = None
+    relevance_score: Optional[float] = None
+    star_score: Optional[dict] = None
+    speaking_pace_wpm: Optional[float] = None
+    filler_word_count: Optional[int] = None
+    voice_confidence_score: Optional[float] = None
+    eye_contact_score: Optional[float] = None
+    facial_expression_score: Optional[float] = None
+    posture_score: Optional[float] = None
+
+
+class InterviewReportOut(BaseModel):
+    session_id: str
+    session_status: InterviewStatus
+    is_preliminary: bool
+    questions_answered: int
+    total_questions: int
+    weight_coverage: float
+    communication_score: Optional[float] = None
+    confidence_score: Optional[float] = None
+    technical_score: Optional[float] = None
+    behavioral_score: Optional[float] = None
+    resume_match_score: Optional[float] = None
+    hiring_readiness_score: Optional[float] = None
+    improvement_suggestions: List[dict] = []
+    questions: List[QuestionAnswerSummary] = []

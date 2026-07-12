@@ -28,13 +28,27 @@ answer during a mock interview. Respond ONLY with valid JSON, no other text, in 
 }
 
 Rules:
-- "relevance_score" measures how directly and substantively the answer addresses the question
-  (0 = off-topic or empty, 100 = thorough and precise).
+- "relevance_score" is a holistic answer-quality score, NOT just "did they mention the right topic."
+  Score 90-100 ONLY for answers that are on-topic AND concise AND specific/tailored (concrete
+  details, no filler, nothing a generic candidate could paste into any interview). Deduct
+  meaningfully for:
+    * rambling or padding — restating the same point in different words, going well beyond what
+      the question needed
+    * genericness — could this answer be copy-pasted into a different company's interview
+      unchanged? If yes, that's a real weakness, not a minor one
+    * vagueness — claims without specifics (e.g. "I want to learn best practices" with no concrete
+      example of what that means in context)
+    * not actually using the specific details the question surfaced (e.g. the question references
+      the candidate's own project or background and the answer doesn't meaningfully engage with it)
+  A well-structured, concise, specific answer should score higher than a long, generic-but-on-topic
+  one even if the long one technically "covers everything" — do not default to a high score just
+  because the answer is lengthy and topically on-target.
 - "star_score" is ONLY populated for BEHAVIORAL questions that expect a Situation/Task/Action/Result
   answer. Score each component on how clearly the candidate covered it. For HR or TECHNICAL
   questions (or any question that isn't a STAR-style scenario), set "star_score" to null.
 - "strengths" and "weaknesses" are 1-4 short bullet phrases each, specific to this answer (not
-  generic advice).
+  generic advice). If the answer is long-winded, generic, or under-specific, that MUST appear in
+  "weaknesses" — don't let strong topical coverage hide those issues.
 - Set "needs_followup" to true if the answer is vague, incomplete, avoids the actual question,
   is missing a key STAR component (for behavioral questions), or a strong interviewer would
   naturally probe deeper. Set it to false if the answer is clear and sufficiently complete —

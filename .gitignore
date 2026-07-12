@@ -1,21 +1,43 @@
-# Virtual environment
-venv/
-.venv/
-
-# Environment variables
+# Secrets and environment files
 .env
 .env.*
+!.env.example
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+*.egg-info/
+.pytest_cache/
+
+# Backend generated files
+backend/uploads/
+uploads/
+
+# Frontend
+node_modules/
+interview-coach-frontend/node_modules/
+dist/
+interview-coach-frontend/dist/
+.vite/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # macOS
 .DS_Store
 
-# Uploads
-uploads/
-
-# IDE
+# Editors
 .vscode/
 .idea/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3

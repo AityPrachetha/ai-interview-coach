@@ -147,3 +147,25 @@ class Answer(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     question = relationship("Question", back_populates="answer")
+
+
+class VisionSample(Base):
+    """
+    Phase 4 — one row per analyzed webcam frame, captured periodically while
+    the candidate is answering a question (not per-answer: a single answer
+    spans many frames sampled over time). Averaged into the parent Answer's
+    eye_contact_score / facial_expression_score / posture_score once the
+    answer is submitted, then no longer needed for scoring — kept around
+    mainly for debugging/tuning the heuristics.
+    """
+    __tablename__ = "vision_samples"
+
+    id = Column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
+    question_id = Column(UUID(as_uuid=False), ForeignKey("questions.id"), nullable=False)
+
+    face_detected = Column(Integer, default=0)          # 0/1 — frames with no face are excluded from averaging
+    eye_contact_score = Column(Float, nullable=True)
+    facial_expression_score = Column(Float, nullable=True)
+    posture_score = Column(Float, nullable=True)
+
+    captured_at = Column(DateTime, default=datetime.utcnow)
