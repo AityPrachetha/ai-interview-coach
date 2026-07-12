@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     openrouter_api_key: str = ""
     openrouter_model: str = "meta-llama/llama-3.3-70b-instruct"
 
+    # Frontend origin for CORS. Local dev defaults to Vite's port; set this
+    # in production to your deployed frontend's URL (e.g. Vercel), or the
+    # backend will keep only allowing localhost and reject the real app.
+    frontend_url: str = "http://localhost:5173"
+
     # File upload
     max_upload_mb: int = 10
     upload_dir: str = "./uploads"
