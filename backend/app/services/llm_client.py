@@ -116,7 +116,10 @@ def call_json(system_prompt: str, user_prompt: str, model: str | None = None) ->
     last_error: Exception | None = None
     for provider_name, attempt in attempts:
         try:
-            return attempt()
+            logger.info("Trying LLM provider: %s", provider_name)
+            result = attempt()
+            logger.info("LLM provider '%s' succeeded", provider_name)
+            return result
         except Exception as e:  # noqa: BLE001 - deliberately broad, see module docstring
             logger.warning("LLM provider '%s' failed, falling back: %s", provider_name, e)
             last_error = e
