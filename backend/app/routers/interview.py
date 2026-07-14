@@ -1,5 +1,3 @@
-import os
-import tempfile
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
@@ -342,13 +340,14 @@ async def submit_answer_audio(
 ):
     """
     Same as POST /answers, but the candidate's answer comes in as a recorded
-    audio file instead of typed text. Transcribes via Whisper, derives
-    speaking-pace/filler-word/confidence signals from the transcript +
-    timings, then runs through the exact same scoring/follow-up pipeline as
-    a typed answer.
+    audio file instead of typed text. Transcribes via Groq's hosted Whisper
+    API, derives speaking-pace/filler-word/confidence signals from the
+    transcript + timings, then runs through the exact same scoring/follow-up
+    pipeline as a typed answer.
 
-    Accepts whatever audio container Whisper/ffmpeg can decode (webm, wav,
-    mp3, m4a, ogg — a browser's MediaRecorder output works fine).
+    Accepts whatever audio container the browser's MediaRecorder produces
+    (webm is typical) - sent directly to Groq as raw bytes, no local
+    decoding or temp file needed.
     """
     session = _get_owned_session(session_id, db, current_user)
 
@@ -362,17 +361,11 @@ async def submit_answer_audio(
     if question.answer is not None:
         raise HTTPException(status_code=400, detail="This question has already been answered")
 
-    suffix = os.path.splitext(audio.filename or "")[1] or ".webm"
-    tmp_path = None
-    try:
-        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
-            tmp.write(await audio.read())
-            tmp_path = tmp.name
-
-        stt_result = transcribe_audio(tmp_path)
-    finally:
-        if tmp_path and os.path.exists(tmp_path):
-            os.remove(tmp_path)
+    audio_content = await audio.read()
+    stt_result = transcribe_audio(
+        audio_bytes=audio_content,
+        filename=audio.filename or "answer.webm",
+    )
 
     # Silent/undecodable audio -> transcribe_audio already returns an empty
     # string rather than raising (see speech_to_text.py). Rather than
